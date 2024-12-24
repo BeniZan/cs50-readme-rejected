@@ -1,8 +1,34 @@
 # ZipStream - Compressed file sharing web app
-Upload, compress, save, share, unlist, encrypt, decrypt and search for folders.
+Upload, compress, save, share, download, unlist, encrypt, decrypt and search for zip folders.
 
-## Distinctiveness and Complexity
-I believe my project satisfies the criteria of distinctiveness and complexity because this project explores subjects the course did not touch upon, such as file uploading, drag and drop, zipping and UUID (as a substitute for incremental IDs) for unlisted URLs (so unlisted zip URLs won't be guessed). There is also a custom template filter and context processor. The concept of a file compressing & sharing web app is distinct enough from the rest of the project's course, and this project involves other aspects and complexities greater than the previous projects. 
+# Distinctiveness and Complexity
+I believe my project satisfies the criteria of distinctiveness and complexity because it explores subjects the course did not touch upon, such as multiple files uploading, downloading files using javascript requests, drag and drop with animations, zipping files and UUID (as a substitute for incremental IDs). UUID is used instead of incremental IDs so unlisted zip URLs won't be guessed easily. A custom context processor was added, allowing the security integer value choices to be exposed easily in templates. A custom template filter was also created, to easily convert integer number of bytes to a string readable amount of bytes ('1000' to '1KB'). Zipping is used mainly to compress and lower disk usage on the server, and done by the builtin 'zipFile' python module, same for unzipping and gathering information about files inside. I believe those additions and the concept of a file compressing & sharing web app is distinct enough from the rest of the course projects. 
+
+# How it works
+## Accounts
+The top bar has navigation buttons to log in, log out, register.
+
+## Searching and Downloading
+On the initial index page (aka 'search' page), users can recieve from the server all the zips that they are allowed to view (their own, or other's public files).<br>
+This is given via paging, and viewed as a table, sorted by date.<br>
+Users can use the search bar to search for a specific zip folder, which sends a request to the server and recives back zips with names contains the search.<br>
+Unlisted zips can only be viewed through given URL, and won't be shown on the initial page or via search.<br>
+Clicking on a zip folder item, will take you the zip folder page, displaying all the files inside and their size. Here you can also download the zip file.<br>
+Owners can change the security of the zip file (public, private, unlisted) without refreshing the page.<br>
+If the zip file is unlisted or public, there will be a button to copy the link into the clipboard.<br>
+You can click the owner's name to enter the profile page, displaying only zips uploaded by the profiled user.<br>
+Here users can also use the search bar.<br>
+
+## Uploading and Zipping
+If the user is signed in, an 'Upload' navigation button will be at the top, which will take the user to the upload page.<br>
+The user inputs files (folders and subfolders are not supported) into the form, by drag and dropping or browsing. Multiple files can be dropped or selected.<br>
+If the user reached the upload limit, a warning will be displayed and he will not be able to upload the form until the files are smaller than the upload limit.<br>
+Name for the zip is required, description is optional.<br>
+Security: Public - Anyone can view. Unlisted - can only be viewed with the link, unless you are the owner. private - only viewed by the owner.<br>
+Than, the form can uploaded to the django server.<br>
+The server recieves the form and creates ZipUpload object accordingly.<br>
+Using Python's built in 'zipFile' module, the server zips the files and puts them in the 'zips' folder, with the ZipUpload uuid as the zip name, and saves it using FileField.<br>
+Later the zip can requested using the uuid, and the server can retrieve the zip file using the FileField and be unzipped using the same module, exposing the information about files inside, and sending them to the user.<br>
 
 ## Files
 
@@ -11,7 +37,7 @@ I believe my project satisfies the criteria of distinctiveness and complexity be
 - [context_processors.py:](zipstream/templatetags/context_processors.py) Additional context processor for security option values.
 - [views.py:](zipstream/views.py) Views, handling HTTP requests.
 - [urls.py:](zipstream/urls.py) List of the site URLs and the link to their views function.
-- [models.py:](zipstream/models.py) Models and their methods, as well as zipping methods.
+- [models.py:](zipstream/models.py) Models and their methods, as well as zipping methods. ZipUpload model can be found here.
 
 #### Javascript
 - [file-drag-drop.js:](zipstream/static/zipstream/file-drag-drop.js) Handles file drag and dropping and inputting via click. Updates the UI, listing the files and checks for file sizes, displaying a warning if reached max upload size.
